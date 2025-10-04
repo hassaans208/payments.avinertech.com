@@ -51,6 +51,10 @@ public class SecurityConfig {
         List<String> origins = Arrays.asList(allowedOrigins.split(","));
         configuration.setAllowedOriginPatterns(origins);
         
+        // Add same-origin support for iframe contexts
+        configuration.addAllowedOriginPattern("https://payments.avinertech.com");
+        configuration.addAllowedOriginPattern("https://*.avinertech.com");
+        
         // Allow specific methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         
