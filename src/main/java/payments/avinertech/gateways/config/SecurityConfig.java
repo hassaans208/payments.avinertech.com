@@ -27,7 +27,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions
-                    .mode(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)
+                    .mode(XFrameOptionsHeaderWriter.XFrameOptionsMode.DISABLE)
                 )
             )
             .authorizeHttpRequests(authz -> authz
