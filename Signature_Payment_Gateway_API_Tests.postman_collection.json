@@ -1,0 +1,131 @@
+{
+  "info": {
+    "name": "Signature-Based Payment Gateway API Tests",
+    "description": "Test collection for signature-based payment gateway API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "signature",
+      "value": "test-signature-12345-encrypted-data"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health/ready",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "health", "ready"]
+        }
+      }
+    },
+    {
+      "name": "Create Payment (Signature-Based)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "test-signature"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "test-subdomain"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"signature\": \"{{signature}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments"]
+        }
+      }
+    },
+    {
+      "name": "Get Payment",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "test-signature"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "test-subdomain"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments/{{paymentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments", "{{paymentId}}"]
+        }
+      }
+    },
+    {
+      "name": "Get Payment Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "test-signature"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "test-subdomain"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments/{{paymentId}}/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments", "{{paymentId}}", "status"]
+        }
+      }
+    },
+    {
+      "name": "Complete Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "test-signature"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "test-subdomain"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cardNumber\": \"4111111111111111\",\n  \"expiryDate\": \"12/25\",\n  \"cvv\": \"123\",\n  \"cardholderName\": \"John Doe\",\n  \"billingAddress\": \"123 Main St\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"zipCode\": \"10001\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+1234567890\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments/{{paymentId}}/complete",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments", "{{paymentId}}", "complete"]
+        }
+      }
+    }
+  ]
+}

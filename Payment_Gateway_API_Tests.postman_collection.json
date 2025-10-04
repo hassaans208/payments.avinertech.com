@@ -1,0 +1,241 @@
+{
+  "info": {
+    "name": "Payment Gateway API Tests",
+    "description": "Comprehensive API testing collection for Payment Gateway",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "signature",
+      "value": "test-signature",
+      "type": "string"
+    },
+    {
+      "key": "encSub",
+      "value": "test-subdomain",
+      "type": "string"
+    },
+    {
+      "key": "paymentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health/ready",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "health", "ready"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('paymentId', response.id);",
+              "    console.log('Payment created with ID:', response.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "{{signature}}"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "{{encSub}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenantId\": \"tenant-123\",\n  \"providerCode\": \"payoneer\",\n  \"providerAccountId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"amountMinor\": 29999,\n  \"currency\": \"USD\",\n  \"method\": \"credit_card\",\n  \"orderId\": \"TEST-ORDER-{{$timestamp}}\",\n  \"productName\": \"Premium Software License\",\n  \"serviceName\": \"Enterprise Support Package\",\n  \"companyName\": \"AvinerTech Solutions\",\n  \"serviceHost\": \"https://example.com\",\n  \"clientDomain\": \"client.example.com\",\n  \"clientId\": \"client123\",\n  \"clientReferenceId\": \"REF-789\",\n  \"callbackUrl\": \"https://webhook.site/your-unique-url\",\n  \"metadata\": {\n    \"customerId\": \"cust_123\",\n    \"subscriptionId\": \"sub_456\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Payment",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "{{signature}}"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "{{encSub}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments/{{paymentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments", "{{paymentId}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Payment Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "{{signature}}"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "{{encSub}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments/{{paymentId}}/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments", "{{paymentId}}", "status"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Complete Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-APP-SIGNATURE",
+            "value": "{{signature}}"
+          },
+          {
+            "key": "X-ENC-SUB",
+            "value": "{{encSub}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"123-456-7890\",\n  \"accountTitle\": \"Mr.\",\n  \"cardNumber\": \"4111 1111 1111 1111\",\n  \"expiryDate\": \"12/25\",\n  \"cvv\": \"123\",\n  \"cardholderName\": \"John Doe\",\n  \"address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"zipCode\": \"10001\",\n  \"country\": \"US\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/payments/{{paymentId}}/complete",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "payments", "{{paymentId}}", "complete"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error Tests",
+      "item": [
+        {
+          "name": "Create Payment - Missing Headers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amountMinor\": 29999,\n  \"currency\": \"USD\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "payments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payment - Invalid ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-APP-SIGNATURE",
+                "value": "{{signature}}"
+              },
+              {
+                "key": "X-ENC-SUB",
+                "value": "{{encSub}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/payments/invalid-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "payments", "invalid-id"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment - Invalid Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-APP-SIGNATURE",
+                "value": "{{signature}}"
+              },
+              {
+                "key": "X-ENC-SUB",
+                "value": "{{encSub}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amountMinor\": -100,\n  \"currency\": \"INVALID\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "payments"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

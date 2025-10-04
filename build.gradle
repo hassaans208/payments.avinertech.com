@@ -1,0 +1,83 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+    // Remove the standalone Flyway plugin unless you really need CLI tasks
+    // id 'org.flywaydb.flyway' version '9.22.3'
+}
+
+group = 'payments.avinertech'
+version = '0.0.1-SNAPSHOT'
+description = 'Payments Module for AvinerTech'
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+}
+
+configurations {
+    compileOnly { extendsFrom annotationProcessor }
+}
+
+repositories { mavenCentral() }
+
+ext {
+    set('testcontainersVersion', "1.20.0")
+}
+
+dependencies {
+    // Web & HTTP
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // Data & Cache
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // 🔁 Use MariaDB driver (and remove MySQL driver)
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+    // 🔁 Use Boot’s Redis starter instead of raw spring-data-redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Flyway – let Spring Boot manage the version (compatible with Boot 3.5.x & MariaDB 10.x)
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-mysql'
+
+    // Resilience
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.3.0'
+    implementation 'org.springframework.retry:spring-retry:2.0.5'
+
+    // Utilities
+    implementation 'org.javamoney:moneta:1.4.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.3'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+
+    // Observability
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.14.2'
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel:1.3.0'
+    implementation(platform("io.opentelemetry:opentelemetry-bom:1.54.1"))
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+
+    // Lombok & MapStruct processor
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    // OpenAPI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+    // Testing (align with MariaDB/MySQL as needed)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'com.github.tomakehurst:wiremock-jre8'
+    testImplementation 'org.awaitility:awaitility'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports { mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}" }
+}
+
+tasks.named('test') { useJUnitPlatform() }

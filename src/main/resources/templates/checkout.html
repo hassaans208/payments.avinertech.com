@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - AvinerTech Partnered Payoneer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .checkout-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+
+        .brand-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-logo i {
+            color: #4CAF50;
+            font-size: 3rem;
+        }
+
+        .main-heading {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .sub-heading {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .security-features {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .security-features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .security-features i {
+            color: #4CAF50;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            padding: 60px 40px;
+            background: white;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .order-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .order-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .order-details span {
+            color: #666;
+        }
+
+        .order-details strong {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .amount-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .amount-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .amount-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .amount-currency {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+            
+            .brand-section {
+                padding: 40px 30px;
+            }
+            
+            .form-section {
+                padding: 40px 30px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <!-- Brand Section -->
+        <div class="brand-section">
+            <div class="brand-content">
+                <div class="brand-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>AvinerTech</span>
+                </div>
+                <h1 class="main-heading">Checkout</h1>
+                <h2 class="sub-heading">AvinerTech Partnered Payoneer</h2>
+                <p style="font-size: 1rem; opacity: 0.8; line-height: 1.6;">
+                    Secure your payment with enterprise-grade security and industry-leading encryption. 
+                    Your financial information is protected by advanced fraud detection and SSL encryption.
+                </p>
+                <ul class="security-features">
+                    <li><i class="fas fa-lock"></i> 256-bit SSL Encryption</li>
+                    <li><i class="fas fa-shield-alt"></i> PCI DSS Compliant</li>
+                    <li><i class="fas fa-user-shield"></i> Fraud Protection</li>
+                    <li><i class="fas fa-check-circle"></i> Money-back Guarantee</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2 class="form-title">Complete Your Purchase</h2>
+            </div>
+
+            <div class="order-info">
+                <h3>Order Details</h3>
+                <div class="order-details">
+                    <div><span>Product:</span> <strong th:text="${productName}">Premium Software License</strong></div>
+                    <div><span>Service:</span> <strong th:text="${serviceName}">Enterprise Support Package</strong></div>
+                    <div><span>Company:</span> <strong th:text="${companyName}">AvinerTech Solutions</strong></div>
+                    <div><span>Support:</span> <strong th:text="${supportName}">Customer Success Team</strong></div>
+                    <div><span>Order ID:</span> <strong th:text="${orderId}">DEMO-12345</strong></div>
+                </div>
+            </div>
+
+            <div class="amount-section">
+                <div class="amount-label">Total Amount</div>
+                <div class="amount-value" th:text="${amount}">$299.99</div>
+                <div class="amount-currency" th:text="${currency}">USD</div>
+            </div>
+
+            <form id="checkoutForm" method="post" action="/forms/payment/checkout">
+                <input type="hidden" name="paymentId" th:value="${paymentId}">
+                <input type="hidden" name="orderId" th:value="${orderId}">
+                <input type="hidden" name="amount" th:value="${amount}">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="accountTitle">Account Title *</label>
+                    <input type="text" id="accountTitle" name="accountTitle" required>
+                </div>
+
+                <!-- Payment Information Section -->
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin: 30px 0; border-left: 4px solid #667eea;">
+                    <h3 style="color: #333; margin-bottom: 20px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-credit-card" style="color: #667eea;"></i>
+                        Payment Information
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number *</label>
+                        <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiryDate">Expiry Date *</label>
+                            <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV *</label>
+                            <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cardholderName">Cardholder Name *</label>
+                        <input type="text" id="cardholderName" name="cardholderName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Street Address *</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State/Province *</label>
+                        <input type="text" id="state" name="state" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zipCode">ZIP/Postal Code *</label>
+                        <input type="text" id="zipCode" name="zipCode" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country *</label>
+                        <select id="country" name="country" required>
+                            <option value="">Select Country</option>
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="GB">United Kingdom</option>
+                            <option value="AU">Australia</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="IT">Italy</option>
+                            <option value="ES">Spain</option>
+                            <option value="NL">Netherlands</option>
+                            <option value="SE">Sweden</option>
+                            <option value="NO">Norway</option>
+                            <option value="DK">Denmark</option>
+                            <option value="FI">Finland</option>
+                            <option value="CH">Switzerland</option>
+                            <option value="AT">Austria</option>
+                            <option value="BE">Belgium</option>
+                            <option value="IE">Ireland</option>
+                            <option value="PT">Portugal</option>
+                            <option value="GR">Greece</option>
+                            <option value="PL">Poland</option>
+                            <option value="CZ">Czech Republic</option>
+                            <option value="HU">Hungary</option>
+                            <option value="SK">Slovakia</option>
+                            <option value="SI">Slovenia</option>
+                            <option value="HR">Croatia</option>
+                            <option value="RO">Romania</option>
+                            <option value="BG">Bulgaria</option>
+                            <option value="EE">Estonia</option>
+                            <option value="LV">Latvia</option>
+                            <option value="LT">Lithuania</option>
+                            <option value="LU">Luxembourg</option>
+                            <option value="MT">Malta</option>
+                            <option value="CY">Cyprus</option>
+                            <option value="JP">Japan</option>
+                            <option value="KR">South Korea</option>
+                            <option value="SG">Singapore</option>
+                            <option value="HK">Hong Kong</option>
+                            <option value="TW">Taiwan</option>
+                            <option value="NZ">New Zealand</option>
+                            <option value="IN">India</option>
+                            <option value="CN">China</option>
+                            <option value="BR">Brazil</option>
+                            <option value="MX">Mexico</option>
+                            <option value="AR">Argentina</option>
+                            <option value="CL">Chile</option>
+                            <option value="CO">Colombia</option>
+                            <option value="PE">Peru</option>
+                            <option value="VE">Venezuela</option>
+                            <option value="ZA">South Africa</option>
+                            <option value="EG">Egypt</option>
+                            <option value="NG">Nigeria</option>
+                            <option value="KE">Kenya</option>
+                            <option value="MA">Morocco</option>
+                            <option value="TN">Tunisia</option>
+                            <option value="DZ">Algeria</option>
+                            <option value="LY">Libya</option>
+                            <option value="SD">Sudan</option>
+                            <option value="ET">Ethiopia</option>
+                            <option value="GH">Ghana</option>
+                            <option value="UG">Uganda</option>
+                            <option value="TZ">Tanzania</option>
+                            <option value="RW">Rwanda</option>
+                            <option value="BW">Botswana</option>
+                            <option value="ZM">Zambia</option>
+                            <option value="ZW">Zimbabwe</option>
+                            <option value="MW">Malawi</option>
+                            <option value="MZ">Mozambique</option>
+                            <option value="MG">Madagascar</option>
+                            <option value="MU">Mauritius</option>
+                            <option value="SC">Seychelles</option>
+                            <option value="RE">Réunion</option>
+                            <option value="YT">Mayotte</option>
+                            <option value="KM">Comoros</option>
+                            <option value="DJ">Djibouti</option>
+                            <option value="SO">Somalia</option>
+                            <option value="ER">Eritrea</option>
+                            <option value="SS">South Sudan</option>
+                            <option value="CF">Central African Republic</option>
+                            <option value="TD">Chad</option>
+                            <option value="NE">Niger</option>
+                            <option value="ML">Mali</option>
+                            <option value="BF">Burkina Faso</option>
+                            <option value="CI">Ivory Coast</option>
+                            <option value="SN">Senegal</option>
+                            <option value="GM">Gambia</option>
+                            <option value="GN">Guinea</option>
+                            <option value="GW">Guinea-Bissau</option>
+                            <option value="SL">Sierra Leone</option>
+                            <option value="LR">Liberia</option>
+                            <option value="CV">Cape Verde</option>
+                            <option value="ST">São Tomé and Príncipe</option>
+                            <option value="GQ">Equatorial Guinea</option>
+                            <option value="GA">Gabon</option>
+                            <option value="CG">Republic of the Congo</option>
+                            <option value="CD">Democratic Republic of the Congo</option>
+                            <option value="AO">Angola</option>
+                            <option value="NA">Namibia</option>
+                            <option value="SZ">Eswatini</option>
+                            <option value="LS">Lesotho</option>
+                            <option value="MA">Morocco</option>
+                            <option value="TN">Tunisia</option>
+                            <option value="DZ">Algeria</option>
+                            <option value="LY">Libya</option>
+                            <option value="SD">Sudan</option>
+                            <option value="ET">Ethiopia</option>
+                            <option value="ER">Eritrea</option>
+                            <option value="SS">South Sudan</option>
+                            <option value="CF">Central African Republic</option>
+                            <option value="TD">Chad</option>
+                            <option value="NE">Niger</option>
+                            <option value="ML">Mali</option>
+                            <option value="BF">Burkina Faso</option>
+                            <option value="CI">Ivory Coast</option>
+                            <option value="SN">Senegal</option>
+                            <option value="GM">Gambia</option>
+                            <option value="GN">Guinea</option>
+                            <option value="GW">Guinea-Bissau</option>
+                            <option value="SL">Sierra Leone</option>
+                            <option value="LR">Liberia</option>
+                            <option value="CV">Cape Verde</option>
+                            <option value="ST">São Tomé and Príncipe</option>
+                            <option value="GQ">Equatorial Guinea</option>
+                            <option value="GA">Gabon</option>
+                            <option value="CG">Republic of the Congo</option>
+                            <option value="CD">Democratic Republic of the Congo</option>
+                            <option value="AO">Angola</option>
+                            <option value="NA">Namibia</option>
+                            <option value="SZ">Eswatini</option>
+                            <option value="LS">Lesotho</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-lock"></i> Complete Secure Payment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <div class="loader-text">Processing your payment securely...</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loader
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('submitBtn').disabled = true;
+            
+            // Simulate processing time
+            setTimeout(() => {
+                // Submit the form
+                this.submit();
+            }, 1500);
+        });
+
+        // Card number formatting
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        // Expiry date formatting
+        document.getElementById('expiryDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // CVV formatting (numbers only)
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        // Phone number formatting
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 6) {
+                value = value.substring(0, 3) + '-' + value.substring(3, 6) + '-' + value.substring(6, 10);
+            } else if (value.length >= 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
+            }
+            e.target.value = value;
+        });
+
+        // Add some interactive effects
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Card type detection
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            const cardNumber = e.target.value.replace(/\s/g, '');
+            let cardType = '';
+            
+            if (cardNumber.startsWith('4')) {
+                cardType = 'Visa';
+            } else if (cardNumber.startsWith('5') || cardNumber.startsWith('2')) {
+                cardType = 'Mastercard';
+            } else if (cardNumber.startsWith('3')) {
+                cardType = 'American Express';
+            } else if (cardNumber.startsWith('6')) {
+                cardType = 'Discover';
+            }
+            
+            // Add visual indicator for card type
+            const cardTypeIndicator = document.getElementById('cardTypeIndicator') || 
+                document.createElement('div');
+            cardTypeIndicator.id = 'cardTypeIndicator';
+            cardTypeIndicator.style.cssText = `
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #667eea;
+                font-size: 0.8rem;
+                font-weight: 600;
+            `;
+            
+            if (cardType) {
+                cardTypeIndicator.textContent = cardType;
+                e.target.parentElement.style.position = 'relative';
+                if (!e.target.parentElement.querySelector('#cardTypeIndicator')) {
+                    e.target.parentElement.appendChild(cardTypeIndicator);
+                }
+            } else {
+                const existing = e.target.parentElement.querySelector('#cardTypeIndicator');
+                if (existing) existing.remove();
+            }
+        });
+    </script>
+</body>
+</html>

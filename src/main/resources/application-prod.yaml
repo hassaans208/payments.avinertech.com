@@ -1,0 +1,95 @@
+# Production Configuration for Payment Gateway
+# This file should be used for production deployment
+
+spring:
+  profiles:
+    active: production
+  
+  datasource:
+    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:payments}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Use validate in production, not create
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.dialect: org.hibernate.dialect.MariaDB106Dialect
+      hibernate.show_sql: false
+      hibernate.format_sql: false
+      hibernate.hbm2ddl.auto: validate
+      hibernate.hbm2ddl.halt_on_error: true
+    show-sql: false
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
+
+  flyway:
+    enabled: false  # Disabled in production, use manual migrations
+
+  security:
+    user:
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:change-me-in-production}
+
+  servlet:
+    context-path: /api
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  http2:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    payments.avinertech.gateways: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/payment-gateway.log
+    max-size: 10MB
+    max-history: 30
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  info:
+    env:
+      enabled: true
+
+# Application specific configuration
+app:
+  signature:
+    decrypt-url: ${SIGNATURE_DECRYPT_URL:https://signal.avinertech.com/api/decrypt}
+    timeout: ${SIGNATURE_TIMEOUT:5000}
+  security:
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:https://onboard.avinertech.com}
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+      allowed-headers: "*"
+      allow-credentials: true
+  payment:
+    default-provider: payoneer
+    callback-timeout: ${CALLBACK_TIMEOUT:10000}
