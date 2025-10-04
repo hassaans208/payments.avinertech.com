@@ -38,7 +38,8 @@ public class CheckoutController {
     @GetMapping("/payment/checkout")
     public String checkoutPage(
             @RequestParam(required = true) String paymentId,
-            Model model) {
+            Model model,
+            HttpServletRequest request) {
         
         log.info("Loading checkout page for payment: {}", paymentId);
         
@@ -47,7 +48,14 @@ public class CheckoutController {
             try {
                 UUID paymentUuid = UUID.fromString(paymentId);
                 System.out.println("Payment UUID: " + paymentUuid);
-                Payment payment = paymentService.getPaymentById(paymentUuid, "123");
+                String tenantId = (String) request.getAttribute("tenantId");
+                // Use default tenantId if not available from request attributes
+                if (tenantId == null) {
+                    tenantId = "default";
+                    log.info("Using default tenantId for checkout page: {}", paymentId);
+                }
+                
+                Payment payment = paymentService.getPaymentById(paymentUuid, tenantId);
                 System.out.println("Payment: " + payment);
                 // Check if payment is in correct status
                 if (!"INITIATED".equals(payment.getStatus())) {
@@ -117,6 +125,14 @@ public class CheckoutController {
             UUID paymentId = UUID.fromString(paymentIdStr);
             String tenantId = (String) request.getAttribute("tenantId");
             
+            // Use default tenantId if not available from request attributes
+            if (tenantId == null) {
+                tenantId = "default";
+                log.info("Using default tenantId for payment: {}", paymentIdStr);
+            }
+            
+            log.info("Processing payment: {} with tenantId: {}", paymentIdStr, tenantId);
+            
             // Complete the payment with form data
             Payment completedPayment = paymentService.completePayment(paymentId, tenantId, Map.copyOf(formData));
             
@@ -152,6 +168,12 @@ public class CheckoutController {
         if (paymentId != null) {
             try {
                 String tenantId = (String) request.getAttribute("tenantId");
+                // Use default tenantId if not available from request attributes
+                if (tenantId == null) {
+                    tenantId = "default";
+                    log.info("Using default tenantId for thank you page: {}", paymentId);
+                }
+                
                 UUID paymentUuid = UUID.fromString(paymentId);
                 Payment payment = paymentService.getPaymentById(paymentUuid, tenantId);
                 

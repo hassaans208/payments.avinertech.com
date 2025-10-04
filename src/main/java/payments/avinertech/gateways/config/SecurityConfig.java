@@ -25,7 +25,7 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .headers(headers -> headers
-                .frameOptions().disable()
+                .frameOptions(frameOptions -> frameOptions.disable())
             )
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/v1/health/**").permitAll()

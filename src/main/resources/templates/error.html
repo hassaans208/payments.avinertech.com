@@ -3,15 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error - AvinerTech Payment Gateway</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Error - Payment Gateway</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,107 +12,64 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0;
             padding: 20px;
         }
-
+        
         .error-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
             max-width: 500px;
             width: 100%;
-            text-align: center;
-            padding: 60px 40px;
         }
-
+        
         .error-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
+            font-size: 4rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
         }
-
-        .error-icon i {
-            font-size: 3rem;
-            color: white;
-        }
-
+        
         .error-title {
-            font-size: 2rem;
             color: #333;
+            font-size: 1.8rem;
             margin-bottom: 15px;
-            font-weight: 700;
+            font-weight: 600;
         }
-
+        
         .error-message {
-            font-size: 1.1rem;
             color: #666;
-            margin-bottom: 40px;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
             line-height: 1.5;
         }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
+        
+        .back-button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
         }
-
-        .btn-secondary {
-            background: #f8f9fa;
-            color: #333;
-            border: 2px solid #e1e5e9;
-        }
-
-        .btn:hover {
+        
+        .back-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
     <div class="error-container">
-        <div class="error-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        
+        <div class="error-icon">⚠️</div>
         <h1 class="error-title">Payment Error</h1>
-        <p class="error-message" th:text="${error}">An error occurred while processing your payment.</p>
-
-        <div class="action-buttons">
-            <a href="/forms/payment/checkout" class="btn btn-primary">
-                <i class="fas fa-redo"></i>
-                Try Again
-            </a>
-            <a href="#" class="btn btn-secondary" onclick="history.back()">
-                <i class="fas fa-arrow-left"></i>
-                Go Back
-            </a>
-        </div>
+        <p class="error-message" th:text="${param.message[0]}">An error occurred while processing your payment.</p>
+        <a href="/forms/payment/checkout" class="back-button">Try Again</a>
     </div>
 </body>
 </html>
