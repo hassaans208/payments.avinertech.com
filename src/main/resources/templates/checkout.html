@@ -591,18 +591,59 @@
     </div>
 
     <script>
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            // Show loader
-            document.getElementById('loader').style.display = 'flex';
-            document.getElementById('submitBtn').disabled = true;
-            
-            // Simulate processing time
-            setTimeout(() => {
-                // Submit the form
-                this.submit();
-            }, 1500);
+
+            const loader = document.getElementById('loader');
+            const submitBtn = document.getElementById('submitBtn');
+            loader.style.display = 'flex';
+            submitBtn.disabled = true;
+
+            try {
+                const form = e.currentTarget;
+                const action = form.getAttribute('action');
+                const fd = new FormData(form);
+                const body = new URLSearchParams();
+                for (const [k, v] of fd.entries()) body.append(k, v);
+
+                const resp = await fetch(action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body
+                });
+
+                let data;
+                try {
+                    data = await resp.json();
+                } catch (e) {
+                    loader.style.display = 'none';
+                    submitBtn.disabled = false;
+                    alert('Invalid server response');
+                    return;
+                }
+
+                if (!resp.ok) {
+                    loader.style.display = 'none';
+                    submitBtn.disabled = false;
+                    alert((data && data.message) ? data.message : 'Payment failed');
+                    return;
+                }
+
+                if (data && data.status === true) {
+                    window.location.href = `/forms/payment/thankyou?paymentId=${encodeURIComponent(body.get('paymentId'))}`;
+                } else {
+                    loader.style.display = 'none';
+                    submitBtn.disabled = false;
+                    alert((data && data.message) ? data.message : 'Payment failed');
+                }
+            } catch (err) {
+                loader.style.display = 'none';
+                submitBtn.disabled = false;
+                alert('Unable to complete payment. Please try again.');
+            }
         });
 
         // Card number formatting

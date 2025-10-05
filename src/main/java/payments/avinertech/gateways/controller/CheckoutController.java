@@ -3,6 +3,7 @@ package payments.avinertech.gateways.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -108,8 +109,9 @@ public class CheckoutController {
      * @param request The HTTP request
      * @return Redirect to thank you page or error page
      */
-    @PostMapping(value = "/payment/checkout", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String processCheckout(
+    @PostMapping(value = "/payment/checkout", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> processCheckout(
             @RequestParam Map<String, String> formData,
             HttpServletRequest request) {
         
@@ -117,14 +119,19 @@ public class CheckoutController {
         
         try {
             String paymentIdStr = formData.get("paymentId");
+            System.out.println("Payment ID: " + paymentIdStr);
             if (paymentIdStr == null || paymentIdStr.trim().isEmpty()) {
                 log.error("No payment ID in form data");
-                return "redirect:/forms/payment/error?message=No payment ID provided";
+                Map<String, Object> res = new java.util.HashMap<>();
+                res.put("status", false);
+                res.put("message", "No payment ID provided");
+                return ResponseEntity.badRequest().body(res);
             }
             
             UUID paymentId = UUID.fromString(paymentIdStr);
             String tenantId = (String) request.getAttribute("tenantId");
-            
+            System.out.println("Tenant ID: " + tenantId);
+            System.out.println("Payment ID: " + paymentIdStr);
             // Use default tenantId if not available from request attributes
             if (tenantId == null) {
                 tenantId = "default";
@@ -139,13 +146,19 @@ public class CheckoutController {
             log.info("Successfully completed payment: {} for order: {}", 
                 completedPayment.getId(), 
                 completedPayment.getOrderId());
-            
-            // Redirect to thank you page with payment ID
-            return "redirect:/forms/payment/thankyou?paymentId=" + completedPayment.getId();
-            
+
+            Map<String, Object> res = new java.util.HashMap<>();
+            res.put("status", true);
+            res.put("message", "success");
+            return ResponseEntity.ok(res);
+
         } catch (Exception e) {
             log.error("Failed to complete payment: {}", formData.get("paymentId"), e);
-            return "redirect:/forms/payment/error?message=Payment processing failed: " + e.getMessage();
+            Map<String, Object> res = new java.util.HashMap<>();
+            String msg = e.getMessage() != null ? e.getMessage() : "Payment processing failed";
+            res.put("status", false);
+            res.put("message", msg);
+            return ResponseEntity.internalServerError().body(res);
         }
     }
 

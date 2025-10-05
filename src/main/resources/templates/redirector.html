@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completing Payment...</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+        }
+        .center-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            font-size: 2rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            color: #222;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .spinner {
+            margin-bottom: 1.5rem;
+            width: 48px;
+            height: 48px;
+            border: 6px solid #e0e0e0;
+            border-top: 6px solid #4f8cff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+    </style>
+    <script>
+        // Ensure script runs after DOM is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                // The server injects a JSON string into payloadJson via Thymeleaf
+                var payloadStr = window.payloadJsonString; // fallback if set before
+                if (!payloadStr) {
+                    // Thymeleaf inlined variable
+                    payloadStr = "/*[[${payloadJson}]]*/{}";
+                }
+                var data = (typeof payloadStr === 'string') ? JSON.parse(payloadStr) : payloadStr;
+                if (data && data.redirection_link) {
+                    // Simple, reliable redirect
+                    window.location.replace(data.redirection_link);
+                } else {
+                    document.getElementById('center-message').innerHTML = '<div style="color:#d32f2f;">No redirection link provided.</div>';
+                }
+            } catch (e) {
+                document.getElementById('center-message').innerHTML = '<div style="color:#d32f2f;">Failed to process response.</div>';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="center-message" id="center-message">
+        <div class="spinner"></div>
+        <div>Completing your payment, please wait...</div>
+    </div>
+    <noscript>
+        <div class="center-message">Please enable JavaScript to continue.</div>
+    </noscript>
+</body>
+</html>

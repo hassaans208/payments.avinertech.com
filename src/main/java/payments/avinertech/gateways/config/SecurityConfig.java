@@ -26,6 +26,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions.disable())
+                .contentSecurityPolicy(c -> c.policyDirectives("frame-ancestors 'self' https://payments.avinertech.com https://onboard.avinertech.com https://*.avinertech.com;"))
             )
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/v1/health/**").permitAll()
